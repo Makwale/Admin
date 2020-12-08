@@ -9,4 +9,8 @@ export class HomePage {
 
   constructor() {}
 
+  upadeStatus(status){
+  	alert(status)
+  }
+
 }
