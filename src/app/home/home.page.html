@@ -1,98 +1,102 @@
 <ion-header [translucent]="true">
-  <ion-toolbar  color="background">
-    <ion-title>
-      Admin Dashboard
-    </ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="background">
+        <ion-title>
+            Admin Dashboard
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
-  <ion-devider>
-    <ion-label>Customer orders</ion-label>
-  </ion-devider>
+    <ion-item-divider>
+        <ion-label>Customer orders</ion-label>
+    </ion-item-divider>
 
-  <ion-card>
-  <ion-card-header>
-    <ion-card-title>Order ID: 32534</ion-card-title>
-    <ion-card-subtitle>Order Date: 08 December 2020</ion-card-subtitle>
-    
-  </ion-card-header>
+    <ion-card *ngFor="let order of orders">
+        <ion-card-header>
+            <ion-card-title>Order ID: {{order.id}}</ion-card-title>
+            <ion-card-subtitle>Order Date: {{order.data.odate / 365}}</ion-card-subtitle>
 
-  <ion-card-content>
+        </ion-card-header>
 
-    <ion-devider>
-      
-        <ion-card-title style="margin-left: 0px;">Order Details</ion-card-title>
-    </ion-devider>
-    
-     <ion-item-group>
+        <ion-card-content>
+
+            <ion-item-divider>
+
+                <ion-card-title style="margin-left: 0px;">Order Details</ion-card-title>
+            </ion-item-divider>
+
+            <ion-item-group *ngFor="let item of order.items">
+                <ion-grid>
+                    <ion-row>
+                        <ion-col><b>Item ID: {{item.id}}</b></ion-col>
+                    </ion-row>
+                    <ion-row>
+                        <ion-col>Quantity: {{item.data.quantity}}</ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                        <ion-col>Total Price: R {{item.data.totalprice}}</ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                        <ion-col>Product Name: {{item.product.name}}</ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                        <ion-col>Unit Price: R {{item.product.price}}</ion-col>
+                    </ion-row>
+
+                </ion-grid>
+            </ion-item-group>
+
+            <ion-item-divider>
+
+                <ion-card-title style="margin-left: 0px;">Customer Info</ion-card-title>
+
+            </ion-item-divider>
             <ion-grid>
-              <ion-row>
-                <ion-col><b>Item ID: 344</b></ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>Quantity: 4</ion-col>
-              </ion-row>
 
-              <ion-row>
-                <ion-col>Total Price: R344</ion-col>
-              </ion-row>
-
-              <ion-row>
-                <ion-col>Product Name: Pizza</ion-col>
-              </ion-row>
-
-              <ion-row>
-                <ion-col>Unit Price: 100</ion-col>
-              </ion-row>
-
+                <ion-row>
+                    <ion-col>Phone Number: {{order.data.phonenumber}}</ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Physical Address : {{order.data.housenumber + " " + order.data.str}}</ion-col>
+                </ion-row>
             </ion-grid>
-        </ion-item-group>
+        </ion-card-content>
 
-         <ion-devider>
-      
-        <ion-card-title style="margin-left: 0px;">Customer Info</ion-card-title>
 
-        <ion-grid>
-              <ion-row>
-                <ion-col>Phone Number: 0334343</ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>Physical Address : 2332 Madiba Pretoria</ion-col>
-              </ion-row>
-          </ion-grid>
-    </ion-devider>
-  </ion-card-content>
-  
-  
-  <ion-list>
-  <ion-radio-group value="p" >
-    <ion-list-header>
-      <ion-label>
-        Order Status
-      </ion-label>
-    </ion-list-header>
+        <ion-list>
+            <ion-radio-group value="p">
+                <ion-list-header>
+                    <ion-item-divider>
 
-    <ion-item >
-      <ion-label>On Progress</ion-label>
-      <ion-radio (click)="upadeStatus('p')"  value="p"></ion-radio>
-    </ion-item>
+                        <ion-card-title style="margin-left: 0px;">Order Status</ion-card-title>
 
-    <ion-item >
-      <ion-label>Ready to be deliverd</ion-label>
-      <ion-radio  value="r" (click)="upadeStatus('r')"></ion-radio>
-    </ion-item>
+                    </ion-item-divider>
+                </ion-list-header>
 
-    <ion-item >
-      <ion-label>Deliverd</ion-label>
-      <ion-radio (click)="upadeStatus('d')"  value="d"></ion-radio>
-    </ion-item>
-    </ion-radio-group>
-</ion-list>
+                <ion-item>
+                    <ion-label>On Progress</ion-label>
+                    <ion-radio (click)="upadeStatus(order.id,'p')" value="p"></ion-radio>
+                </ion-item>
 
-<ion-button>Delete order</ion-button>
-</ion-card>
+                <ion-item>
+                    <ion-label>Ready to be deliverd</ion-label>
+                    <ion-radio value="r" (click)="upadeStatus(order.id, 'r')"></ion-radio>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label>Deliverd</ion-label>
+                    <ion-radio (click)="upadeStatus(order.id, 'd')" value="d"></ion-radio>
+                </ion-item>
+            </ion-radio-group>
+        </ion-list>
+
+        <ion-button>Delete order</ion-button>
+        <ion-button (click)="navigateToMap(order)">Direction</ion-button>
+    </ion-card>
 
 
 </ion-content>
