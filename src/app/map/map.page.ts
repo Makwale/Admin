@@ -15,8 +15,11 @@ export class MapPage implements OnInit {
 	map;
 	lat:number;
 	lon:number;
-  direction;
-  coords;
+ 	direction;
+ 	coords;
+ 	zoom = 17;
+	bearing = -12;
+	pitch = 60;
 
   constructor(private deliveryService: DeliveryService, private dbs: DatabaseService) { }
 
@@ -26,6 +29,25 @@ export class MapPage implements OnInit {
   }
 
   ionViewDidEnter(){
+  	this.showMap(12, 0, 0)
+
+  }
+
+  locate(){
+   // console.log(this.deliveryService.order.data.coordsOr)
+   	
+
+    this.direction.setOrigin([this.lon, this.lat]);
+    this.direction.setDestination(this.deliveryService.order.data.coordsOr);
+    this.dbs.updateDirection([this.lon, this.lat]);
+    //this.map.setBearing(180);
+    this.map.setPitch(60);
+    this.map.setZoom(17);
+
+   
+  }
+
+  showMap(zoom, bearing, pitch){
   	mapboxgl.accessToken = 'pk.eyJ1IjoibWFudWVsbWFrd2FsZSIsImEiOiJja2hsc3lmYWUyZzRnMnRsNnY2NWIyeGR6In0.1MGnfpXj_dV2QBO3SchfqA';
   	
   	navigator.geolocation.getCurrentPosition( pos =>{
@@ -37,7 +59,9 @@ export class MapPage implements OnInit {
 	        countries: 'za',
 	        style: 'mapbox://styles/mapbox/dark-v10',
 	        center: [this.lon, this.lat],
-	        zoom: 12,
+	        zoom: zoom,
+	        bearing: bearing,
+	        pitch: pitch
    	 	});
 
    	 	this.map.addControl(new mapboxgl.NavigationControl());
@@ -80,18 +104,7 @@ export class MapPage implements OnInit {
 		});
 
  	})
-
   }
-
-  locate(){
-   // console.log(this.deliveryService.order.data.coordsOr)
-    this.direction.setOrigin([this.lon, this.lat]);
-    this.direction.setDestination(this.deliveryService.order.data.coordsOr);
-    this.dbs.updateDirection([this.lon, this.lat]);
-     
-   
-  }
-
 
 
 }

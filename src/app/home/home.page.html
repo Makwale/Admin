@@ -9,7 +9,7 @@
 <ion-content [fullscreen]="true">
 
     <ion-item-divider>
-        <ion-label>Customer orders</ion-label>
+        <ion-card-title>Customer orders</ion-card-title>
     </ion-item-divider>
 
     <ion-card *ngFor="let order of orders">
@@ -78,12 +78,12 @@
                 </ion-list-header>
 
                 <ion-item>
-                    <ion-label>On Progress</ion-label>
+                    <ion-label>On preparing</ion-label>
                     <ion-radio (click)="upadeStatus(order.id,'p')" value="p"></ion-radio>
                 </ion-item>
 
                 <ion-item>
-                    <ion-label>Ready to be deliverd</ion-label>
+                    <ion-label>Out for delivery</ion-label>
                     <ion-radio value="r" (click)="upadeStatus(order.id, 'r')"></ion-radio>
                 </ion-item>
 

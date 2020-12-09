@@ -17,9 +17,6 @@ export class DatabaseService {
   
 
   orders = []
-  order = {};
-  items = [];
-  item = {};
 
   constructor(private afs: AngularFirestore, private deliveryService: DeliveryService) { 
  
@@ -27,42 +24,41 @@ export class DatabaseService {
   
 
   private getOrdersFromDatabase(){
-    this.afs.collection("Order").snapshotChanges().subscribe(data =>{
+    this.afs.collection("Order").snapshotChanges().subscribe(datas =>{
       let index = 0;
-        for(let order of data){
+        for(let data of datas){
         
+          let order = {};
 
-          let orderData = order.payload.doc.data();
-          let orderId = order.payload.doc.id;
+          order["data"] = data.payload.doc.data();
+          order["id"] = data.payload.doc.id;
 
-          this.order["data"] = orderData;
-          this.order["id"] = orderId;
+          this.afs.collection("Item", ref => ref.where("oRef" , "==" , `${data.payload.doc.id}`)).snapshotChanges().subscribe( itemsData =>{
+            let items = []
+            for(let itemData of itemsData){
+              let item = {};
 
-          this.afs.collection("Item", ref => ref.where("oRef" , "==" , `${orderId}`)).snapshotChanges().subscribe( data2 =>{
-            for(let item of data2){
-
-              let itemData = item.payload.doc.data();
-              let itemId = item.payload.doc.id;
+              let itemDat = itemData.payload.doc.data();
+              let itemId = itemData.payload.doc.id;
 
 
-              this.afs.collection("Prod").doc(itemData["prodRef"]).valueChanges().subscribe( data => {
-                this.item["data"] = itemData;
-                this.item["id"] = itemId;
-                this.item["product"] = data;
+              this.afs.collection("Prod").doc(itemDat["prodRef"]).valueChanges().subscribe( productData => {
+                item["data"] = itemDat;
+                item["id"] = itemId;
+                item["product"] = productData;
                 
-                this.items.push(this.item);
-              
-                this.order["items"] = this.items;
-                this.item = {};
+                items.push(item);
+    
+                order["items"] = items;
               })
               
 
             }
+
+             this.orders.push(order);
            
           })
 
-          this.orders.push(this.order);
-          this.items = [];
         }
     });
 
