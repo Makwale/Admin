@@ -20,12 +20,13 @@ export class MapPage implements OnInit {
  	zoom = 17;
 	bearing = -12;
 	pitch = 60;
+	geolocate;
 
   constructor(private deliveryService: DeliveryService, private dbs: DatabaseService) { }
 
   ngOnInit() {
 
-   
+ 
   }
 
   ionViewDidEnter(){
@@ -41,8 +42,8 @@ export class MapPage implements OnInit {
     this.direction.setDestination(this.deliveryService.order.data.coordsOr);
     this.dbs.updateDirection([this.lon, this.lat]);
     //this.map.setBearing(180);
-    this.map.setPitch(60);
-    this.map.setZoom(17);
+  //  this.map.setPitch(60);
+   // this.map.setZoom(17);
 
    
   }
@@ -62,7 +63,10 @@ export class MapPage implements OnInit {
 	        zoom: zoom,
 	        bearing: bearing,
 	        pitch: pitch
-   	 	});
+			});
+
+			
+		
 
    	 	this.map.addControl(new mapboxgl.NavigationControl());
    	 	
@@ -80,7 +84,7 @@ export class MapPage implements OnInit {
   
 		this.map.addControl(new mapboxgl.FullscreenControl());
 
-		let geolocate = new mapboxgl.GeolocateControl({
+		this.geolocate = new mapboxgl.GeolocateControl({
 			positionOptions: {
 				enableHighAccuracy: true
 			},
@@ -89,22 +93,58 @@ export class MapPage implements OnInit {
 			showAccuracyCircle: true
 		})
 	
-		this.map.addControl(geolocate);
-		
-		geolocate.on('geolocate', function() {
+		this.map.addControl(this.geolocate);
+		this.geolocate.on('geolocate', () =>{
 			
+	
 			navigator.geolocation.getCurrentPosition( pos =>{
+			
 				this.lat = pos.coords.latitude;
 				this.lon = pos.coords.longitude;
-				console.log(pos.coords);
-				alert(pos.coords.latitude + " " + pos.coords.longitude)
-				// this.dbs.updateDirection([this.lon, this.lat]);
+		
+				var marker = new mapboxgl.Marker();
+ 
+				let animateMarker = (timestamp) =>{
+					var radius = 20;
+			
+			// Update the data to a new position based on the animation timestamp. The
+			// divisor in the expression `timestamp / 1000` controls the animation speed.
+					marker.setLngLat([
+						pos.coords.longitude, pos.coords.latitude
+					]);
+			
+				// Ensure it's added to the map. This is safe to call if it's already added.
+						marker.addTo(this.map);
+				
+			// Request the next frame of the animation.
+					requestAnimationFrame(animateMarker);
+					marker.remove();
+			}
+ 
+// Start the animation.
+			requestAnimationFrame(animateMarker);
+	
+				this.dbs.updateDirection([pos.coords.longitude, pos.coords.latitude]);
+				
 			})
-
+	
+			
+	
 		});
 
- 	})
+
+		
+		
+	 })
+	 
+	 
+
   }
 
+  updatePoint(lat, lon){
+	 
+	
+
+  }
 
 }
